@@ -2,12 +2,14 @@ import React from 'react'
 import Logo from './Logo'
 import { NavLink } from 'react-router-dom'
 
-function Sidebar() {
+function Sidebar({width}) {
+
+  const textsize = width>=1200 ? 'text-4xl' : 'text-3xl';
   return (
     <div className='h-full w-[18%] bg-[#41d741] text-white'>
         <div className='flex h-[10%] items-center mt-3 w-full justify-center'>
              <Logo/>
-            <p className='font-bold text-4xl'>TakeCare</p>
+            <p className={`font-bold ${textsize}`}>TakeCare</p>
         </div>
         <div className='flex flex-col w-full h-[60%] justify-center items-center gap-4 font-semibold text-xl'>
           <NavLink to={"/"} className="hover:underline decoration-green-700 decoration-2">Home</NavLink>

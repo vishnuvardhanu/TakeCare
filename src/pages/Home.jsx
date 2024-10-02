@@ -1,9 +1,12 @@
-import React, { useState } from 'react'
+import React, { useContext, useState } from 'react'
+import { toast, ToastContainer } from 'react-toastify';
+import "react-toastify/dist/ReactToastify.css";
 import Search from '../api/search'
 import GenderDropdown from '../components/GenderDropdown';
 import AgeInput from '../components/AgeInput'
 import QueryInput from '../components/QueryInput'
 import NameInput from '../components/NameInput';
+import { MyContext } from '../context/AppContext';
 
 function Home() {
 
@@ -12,20 +15,36 @@ function Home() {
   const[name,setName] = useState("");
   const[age,setAge] = useState("");
   const[gender,setGender] = useState("");
+  const padding = window.innerWidth>=500 ? 'p-5' : 'p-3';
+  const{history,setHistory} = useContext(MyContext);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     console.log("Loading")
     const apikey = process.env.REACT_APP_GEMINI_KEY || 'Key not defined';
     const res = await Search(name, age, gender, query, apikey);
+    if(!res.isHealth)
+    {
+      toast.error("Invalid Query",{
+        position:'top-right'
+      })
+      toast.error("Search Related to Health Issue",{
+        position:'top-right'
+      })
+    }
+    else{
+      toast.success("History Updated",{
+        position:'top-right'
+      })
+    }
     console.log("received");
     setResult(res);
-    console.log(res);
   };
 
+  
   return (
-    <div className='w-[98%] h-[94%] p-5 bg-white rounded overflow-hidden overflow-y-scroll'>
-      <h2 className='text-xl text-[#303036] font-semibold'>CHECK YOUR HEALTH</h2>
+    <div className={`w-[98%] h-full ${padding} bg-white rounded overflow-hidden overflow-y-scroll`}>
+      <h2 className='text-xl text-[#303036] font-bold border-2 border-b-green-700 border-white'>CHECK YOUR HEALTH</h2>
       
 
       <form onSubmit={handleSubmit} className="max-w-lg mx-auto p-4">
@@ -43,8 +62,9 @@ function Home() {
       </form>
 
       <div className="p-4">
+        
         {
-          result && (
+          result && result.isHealth && (
             <>
             <h1 className='text-2xl text-green-700 font-bold border-2 border-b-green-700 border-white'>{result.Heading}</h1>
             <div className='p-2'> 
@@ -52,7 +72,7 @@ function Home() {
               <p>{result.description}</p>
               {/* Causes */}
               {
-                result.causes.length!=0 && (
+                result.causes.length!==0 && (
                   <div>
                     <h2 className='font-bold text-lg text-green-700'>Causes</h2>
                     <ul>
@@ -69,7 +89,7 @@ function Home() {
               }
               {/* Symptoms */}
               {
-                result.symptoms.length!=0 && (
+                result.symptoms.length!==0 && (
                   <div>
                     <h2 className='font-bold text-lg text-green-700'>Symptoms</h2>
                     <ul>
@@ -86,7 +106,7 @@ function Home() {
               }
               {/* Treatment */}
               {
-                result.treatment.length!=0 && (
+                result.treatment.length!==0 && (
                   <div>
                     <h2 className='font-bold text-lg text-green-700'>Treatment</h2>
                     <ul>
@@ -103,7 +123,7 @@ function Home() {
               }
               {/* prevention */}
               {
-                result.prevention.length!=0 && (
+                result.prevention.length!==0 && (
                   <div>
                     <h2 className='font-bold text-lg text-green-700'>Prevention</h2>
                     <ul>
@@ -120,7 +140,7 @@ function Home() {
               }
               {/* Diet */}
               {
-                result.Diet.length!=0 && (
+                result.Diet.length!==0 && (
                   <div>
                     <h2 className='font-bold text-lg text-green-700'>Diet</h2>
                     <ul>
@@ -137,7 +157,7 @@ function Home() {
               }
               {/* related_conditions */}
               {
-                result.related_conditions.length!=0 && (
+                result.related_conditions.length!==0 && (
                   <div>
                     <h2 className='font-bold text-lg text-green-700'>Related Conditions</h2>
                     <ul>
@@ -154,7 +174,7 @@ function Home() {
               }
               {/* examples */}
               {
-                result.examples.length!=0 && (
+                result.examples.length!==0 && (
                   <div>
                     <h2 className='font-bold text-lg text-green-700'>Examples</h2>
                     <ul>
@@ -174,6 +194,7 @@ function Home() {
           )
         }
       </div>
+      <ToastContainer />
     </div>
   )
 }
