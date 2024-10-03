@@ -7,6 +7,7 @@ import AgeInput from '../components/AgeInput'
 import QueryInput from '../components/QueryInput'
 import NameInput from '../components/NameInput';
 import { MyContext } from '../context/AppContext';
+import DnaLoader from '../components/DnaLoader';
 
 function Home() {
 
@@ -17,10 +18,11 @@ function Home() {
   const[gender,setGender] = useState("");
   const padding = window.innerWidth>=500 ? 'p-5' : 'p-3';
   const{history,setHistory} = useContext(MyContext);
+  const[loading,setLoading] = useState();
 
   const handleSubmit = async (e) => {
+    setLoading(true);
     e.preventDefault();
-    console.log("Loading")
     const apikey = process.env.REACT_APP_GEMINI_KEY || 'Key not defined';
     const res = await Search(name, age, gender, query, apikey);
     if(!res.isHealth)
@@ -31,19 +33,21 @@ function Home() {
       toast.error("Search Related to Health Issue",{
         position:'top-right'
       })
+      setQuery("");
     }
     else{
       toast.success("History Updated",{
         position:'top-right'
       })
+      setResult(res);
+      console.log(res);
     }
-    console.log("received");
-    setResult(res);
+    setLoading(false);
   };
 
   
   return (
-    <div className={`w-[98%] h-full ${padding} bg-white rounded overflow-hidden overflow-y-scroll`}>
+    <div className={`w-[98%] h-full ${padding} bg-white rounded overflow-hidden overflow-y-scroll relative`}>
       <h2 className='text-xl text-[#303036] font-bold border-2 border-b-green-700 border-white'>CHECK YOUR HEALTH</h2>
       
 
@@ -60,6 +64,13 @@ function Home() {
           Submit
         </button>
       </form>
+
+      { 
+        loading &&
+        <div className='absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full h-full flex justify-center items-center backdrop-blur-[3px]'>
+          <DnaLoader/>
+        </div>  
+      }
 
       <div className="p-4">
         
