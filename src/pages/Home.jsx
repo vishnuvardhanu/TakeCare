@@ -19,13 +19,15 @@ function Home() {
   const padding = window.innerWidth>=500 ? 'p-5' : 'p-3';
   const{history,setHistory} = useContext(MyContext);
   const[loading,setLoading] = useState();
+  const width = window.innerWidth;
 
   const handleSubmit = async (e) => {
     setLoading(true);
     e.preventDefault();
     const apikey = process.env.REACT_APP_GEMINI_KEY || 'Key not defined';
     const res = await Search(name, age, gender, query, apikey);
-    if(!res.isHealth)
+    console.log(res);
+    if(!res)
     {
       toast.error("Invalid Query",{
         position:'top-right'
@@ -40,14 +42,13 @@ function Home() {
         position:'top-right'
       })
       setResult(res);
-      console.log(res);
     }
     setLoading(false);
   };
 
   
   return (
-    <div className={`w-[98%] h-full ${padding} bg-white rounded overflow-hidden overflow-y-scroll relative`}>
+    <div className={` ${width<1000?'w-full':'w-[98%]'} h-full ${padding} bg-white rounded overflow-hidden overflow-y-scroll relative`}>
       <h2 className='text-xl text-[#303036] font-bold border-2 border-b-green-700 border-white'>CHECK YOUR HEALTH</h2>
       
 
@@ -67,15 +68,14 @@ function Home() {
 
       { 
         loading &&
-        <div className='absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full h-full flex justify-center items-center backdrop-blur-[3px]'>
+        <div className='absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full h-svh flex justify-center items-center backdrop-blur-[3px]'>
           <DnaLoader/>
         </div>  
       }
 
       <div className="p-4">
-        
         {
-          result && result.isHealth && (
+          result && (
             <>
             <h1 className='text-2xl text-green-700 font-bold border-2 border-b-green-700 border-white'>{result.Heading}</h1>
             <div className='p-2'> 

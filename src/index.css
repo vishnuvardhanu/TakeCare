@@ -24,3 +24,7 @@
 ::-webkit-scrollbar-thumb:hover {
     background: #53da53;
 }
+
+.text-with-shadow {
+    text-shadow: 2px 2px 3px rgba(96, 247, 46, 0.7);
+}

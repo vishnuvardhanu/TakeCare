@@ -1,9 +1,10 @@
 import React from 'react'
+import '../index.css'
 
-function Logo() {
+function Logo({textsize}) {
   return (
     <div className='flex justify-center items-center bg-white p-1 rounded-md m-2'>
-        <p className='font-bold text-4xl text-green-500'>TC</p>
+        <p className={`text-with-shadow font-bold ${textsize} text-green-500`}>TC</p>
     </div>
   )
 }
