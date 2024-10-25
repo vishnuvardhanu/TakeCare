@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import Search from "../api/search";
@@ -8,15 +8,15 @@ import QueryInput from "../components/QueryInput";
 import NameInput from "../components/NameInput";
 import { MyContext } from "../context/AppContext";
 import DnaLoader from "../components/DnaLoader";
+import ResultSection from "../components/ResultSection";
 
 function Home() {
   const [query, setQuery] = useState("");
-  const [result, setResult] = useState("");
   const [name, setName] = useState("");
   const [age, setAge] = useState("");
   const [gender, setGender] = useState("");
   const padding = window.innerWidth >= 500 ? "p-5" : "p-3";
-  const { history, setHistory } = useContext(MyContext);
+  const { history, setHistory, updateHistory, result, setResult } = useContext(MyContext);
   const [loading, setLoading] = useState();
   const width = window.innerWidth;
 
@@ -25,8 +25,8 @@ function Home() {
     e.preventDefault();
     const apikey = process.env.REACT_APP_GEMINI_KEY || "Key not defined";
     const res = await Search(name, age, gender, query, apikey);
-    console.log(res)
-    if (!res || res.length==0) {
+
+    if (!res || res.length == 0) {
       toast.error("Invalid Query", {
         position: "top-right",
       });
@@ -34,12 +34,22 @@ function Home() {
         position: "top-right",
       });
       setQuery("");
+      setLoading(false);
+      return;
     } else {
       toast.success("History Updated", {
         position: "top-right",
       });
-      setResult(res);
     }
+    setResult(res);
+    const date = new Date();
+    let day = date.getDate();
+    let month = date.getMonth() + 1;
+    let year = date.getFullYear();
+    day = day < 10 ? `0${day}` : day;
+    month = month < 10 ? `0${month}` : month;
+
+    updateHistory({ ...res, Date: `${day}/${month}/${year}` });
     setLoading(false);
   };
 
@@ -47,7 +57,7 @@ function Home() {
     <div
       className={` ${
         width < 1000 ? "w-full" : "w-[98%]"
-      } h-full ${padding} bg-white rounded overflow-hidden overflow-y-scroll relative`}
+      } home-scrn h-full ${padding} bg-white rounded overflow-hidden overflow-y-scroll relative `}
     >
       <h2 className="text-xl text-[#303036] font-bold border-2 border-b-green-700 border-white">
         CHECK YOUR HEALTH
@@ -82,138 +92,8 @@ function Home() {
             <div className="p-2">
               <h2 className="font-bold text-lg text-green-700">Description</h2>
               <p>{result.description}</p>
-              {/* Causes */}
-              {result.causes.length !== 0 && (
-                <div>
-                  <h2 className="font-bold text-lg text-green-700">Causes</h2>
-                  <ul>
-                    {result.causes.map((cause, index) => {
-                      return (
-                        <li
-                          key={index}
-                          className="list-disc list-inside marker:text-green-600 "
-                        >
-                          {cause}
-                        </li>
-                      );
-                    })}
-                  </ul>
-                </div>
-              )}
-              {/* Symptoms */}
-              {result.symptoms.length !== 0 && (
-                <div>
-                  <h2 className="font-bold text-lg text-green-700">Symptoms</h2>
-                  <ul>
-                    {result.symptoms.map((symptom, index) => {
-                      return (
-                        <li
-                          key={index}
-                          className="list-disc list-inside marker:text-green-600 "
-                        >
-                          {symptom}
-                        </li>
-                      );
-                    })}
-                  </ul>
-                </div>
-              )}
-              {/* Treatment */}
-              {result.treatment.length !== 0 && (
-                <div>
-                  <h2 className="font-bold text-lg text-green-700">
-                    Treatment
-                  </h2>
-                  <ul>
-                    {result.treatment.map((tt, index) => {
-                      return (
-                        <li
-                          key={index}
-                          className="list-disc list-inside marker:text-green-600 "
-                        >
-                          {tt}
-                        </li>
-                      );
-                    })}
-                  </ul>
-                </div>
-              )}
-              {/* prevention */}
-              {result.prevention.length !== 0 && (
-                <div>
-                  <h2 className="font-bold text-lg text-green-700">
-                    Prevention
-                  </h2>
-                  <ul>
-                    {result.prevention.map((tt, index) => {
-                      return (
-                        <li
-                          key={index}
-                          className="list-disc list-inside marker:text-green-600 "
-                        >
-                          {tt}
-                        </li>
-                      );
-                    })}
-                  </ul>
-                </div>
-              )}
-              {/* Diet */}
-              {result.Diet.length !== 0 && (
-                <div>
-                  <h2 className="font-bold text-lg text-green-700">Diet</h2>
-                  <ul>
-                    {result.Diet.map((tt, index) => {
-                      return (
-                        <li
-                          key={index}
-                          className="list-disc list-inside marker:text-green-600 "
-                        >
-                          {tt}
-                        </li>
-                      );
-                    })}
-                  </ul>
-                </div>
-              )}
-              {/* related_conditions */}
-              {result.related_conditions.length !== 0 && (
-                <div>
-                  <h2 className="font-bold text-lg text-green-700">
-                    Related Conditions
-                  </h2>
-                  <ul>
-                    {result.related_conditions.map((tt, index) => {
-                      return (
-                        <li
-                          key={index}
-                          className="list-disc list-inside marker:text-green-600 "
-                        >
-                          {tt}
-                        </li>
-                      );
-                    })}
-                  </ul>
-                </div>
-              )}
-              {/* examples */}
-              {result.examples.length !== 0 && (
-                <div>
-                  <h2 className="font-bold text-lg text-green-700">Examples</h2>
-                  <ul>
-                    {result.examples.map((tt, index) => {
-                      return (
-                        <li
-                          key={index}
-                          className="list-disc list-inside marker:text-green-600 "
-                        >
-                          {tt}
-                        </li>
-                      );
-                    })}
-                  </ul>
-                </div>
-              )}
+              <ResultSection result={result} />
+              <p>{result.seriousness}</p>
             </div>
           </>
         )}

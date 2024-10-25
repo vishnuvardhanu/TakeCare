@@ -1,7 +1,7 @@
-import Search from './api/search';
 import Home from './pages/Home'
 import History from './pages/History';
 import Dashboard from './pages/Dashboard';
+import ViewHistory from './pages/ViewHistory';
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 
 function App() {
@@ -19,7 +19,11 @@ function App() {
         {
           path:'/history',
           element:<History/>
-        }
+        },
+        {
+          path:'/viewhistory',
+          element:<ViewHistory/>
+        },
       ]
     }
   ])
