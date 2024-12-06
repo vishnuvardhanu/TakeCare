@@ -8,6 +8,7 @@ function AppContext({ children }) {
   const [history, setHistory] = useState(
     JSON.parse(localStorage.getItem("healthHistory")) || []
   );
+  const [isSidebar,setIsSidebar] = useState("yes");
 
   const updateHistory = (res) => {
     if (!res) return;
@@ -27,6 +28,8 @@ function AppContext({ children }) {
         setResult,
         selected,
         setSelected,
+        isSidebar,
+        setIsSidebar
       }}
     >
       {children}
